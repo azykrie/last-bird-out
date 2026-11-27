@@ -8,6 +8,12 @@ Real Chromium /usr/bin/chromium, Playwright outside the delivery: native start, 
 
 Four unedited 1280×800 quality-82 browser JPEGs: 01-kitchen (frozen representative renderer state), 02-title (real menu), 03-farmyard (native gameplay), 04-freedom (actual completed native run). Preview modes use the same renderer and can be exited by starting/retrying. Vision inspection was attempted but the service returned HTTP 403; parent visual review remains required.
 
+## Final verification
+
+Final revised browser pass also tested mouse route buttons and native Shift stamina drain: PASS, 61.839-second native finish with three lives; 600 frame intervals averaged 16.6881666666 ms, p95 16.8 ms. No console/page/request failures or external requests. Browser and server closed in finally. The final screenshots were recaptured by this pass.
+
+Executed root main.ts with MAKEFUN_OUTPUT_DIR=/data/home/.hermes/cache/scratch/last-bird-package-verify. It emitted game/, screenshots/, dossier.json. Independent buildDossier from the official kit matched byte-for-byte; vendor bytes matched official SHA-256 dc67187521b24025ff952f8c231485a6eb92d6d71d29edd2a08154ffb4376129. Four JPEGs verified 1280×800, each below 262144 bytes. Dossier 534637 bytes at first package verification. Official CLI check: 4 passed, 1 failed (transcripts_present, intentionally absent), 15 skipped, 5 checked at submission. This is NOT a full submission-gate pass. Git diff --check passed.
+
 ## Adversarial self-judgment against official criteria
 
 1. Completeness: real playable start→farm→pantry→kitchen→win and caught→retry. Turkey, farmer, oven, knife and HUD are present. Cover is an explicit deterministic scene, not a completed native kitchen screenshot.
