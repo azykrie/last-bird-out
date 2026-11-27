@@ -1,0 +1,9 @@
+out/
+output/
+node_modules/
+playwright-report/
+*.log
+*.tar.gz
+transcripts*
+.test-output/
+.DS_Store
