@@ -49,3 +49,28 @@ test('gravity lands, overhead duck is safe and reset removes every transient',()
 test('pause is owned by lifecycle: simulation steps freeze outside play', () => {
   const s = createRun(2); s.phase = 'paused'; step(s, {}, .05); assert.equal(s.distance, 0);
 });
+
+test('fatal collision at the escape gate takes precedence over winning', () => {
+ const s=createRun(1);beginRun(s);s.distance=599.99;s.lives=1;
+ s.obstacles=[{lane:1,z:.165,type:'block'}];step(s,{},1/60);
+ assert.equal(s.lives,0);assert.equal(s.phase,'caught');
+});
+test('chase threshold catches before escape even with lives remaining', () => {
+ const s=createRun(1);beginRun(s);s.distance=599.99;s.chase=99.999;
+ step(s,{},1/60);assert.equal(s.phase,'caught');assert.equal(s.lives,3);
+});
+test('airborne turkey cannot collect floor corn', () => {
+ const s=createRun(1);beginRun(s);s.jumpY=1;s.obstacles=[{lane:1,z:.165,type:'corn'}];
+ step(s,{},1/60);assert.equal(s.corn,0);assert.equal(s.score,0);
+});
+test('invalid time deltas leave the entire run unchanged', () => {
+ for(const dt of [NaN,Infinity,-Infinity,-1]){
+  const s=createRun(1);beginRun(s);const before=structuredClone(s);
+  step(s,{left:true,jump:true,dash:true},dt);assert.deepEqual(s,before,`dt ${dt}`);
+ }
+});
+test('collision pushing chase to threshold also catches before escape', () => {
+ const s=createRun(1);beginRun(s);s.distance=599.99;s.chase=90;
+ s.obstacles=[{lane:1,z:.165,type:'block'}];step(s,{},1/60);
+ assert.equal(s.lives,2);assert.equal(s.chase,100);assert.equal(s.phase,'caught');
+});

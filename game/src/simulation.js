@@ -9,6 +9,7 @@ function spawn(state) {
   state.obstacles.push({ lane, z: 1.08, type: roll < .28 ? 'overhead' : roll < .56 ? 'block' : roll < .79 ? (state.stage === 2 ? 'oven' : 'hay') : 'corn' });
 }
 export function step(s, input = {}, dt = 1 / 60) {
+  if (!Number.isFinite(dt) || dt < 0) return s;
   dt = clamp(dt, 0, .05);
   if (s.phase !== 'play') return s;
   s.elapsed += dt; s.distance += dt * (8 + Math.min(5, s.elapsed * .055));
@@ -32,13 +33,13 @@ export function step(s, input = {}, dt = 1 / 60) {
   for (const o of s.obstacles) {
     if (o.z < .16 && o.z > .09 && o.lane === s.lane && !o.done) {
       o.done = true;
-      if (o.type === 'corn') { s.score += 100; s.corn++; }
+      if (o.type === 'corn') { if (s.jumpY === 0) { s.score += 100; s.corn++; } }
       else if (o.type === 'block' || (o.type === 'overhead' && !s.crouch) || ((o.type === 'hay' || o.type === 'oven') && s.jumpY < .45)) {
-        if (s.invulnerable === 0) { s.lives--; s.invulnerable = 1.15; s.chase = clamp(s.chase + 18, 0, 100); if (s.lives <= 0) s.phase = 'caught'; }
+        if (s.invulnerable === 0) { s.lives--; s.invulnerable = 1.15; s.chase = clamp(s.chase + 18, 0, 100); if (s.lives <= 0 || s.chase >= 100) s.phase = 'caught'; }
       } else { s.score += 25; }
     }
   }
   s.obstacles = s.obstacles.filter(o => o.z > -.1);
-  if (s.distance >= 600) s.phase = 'win';
+  if (s.phase === 'play' && s.lives > 0 && s.distance >= 600) s.phase = 'win';
   return s;
 }
